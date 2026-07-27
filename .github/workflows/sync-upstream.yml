@@ -2,8 +2,8 @@ name: Sync Upstream
 
 on:
   schedule:
-    # Daily at 06:00 UTC
-    - cron: "0 6 * * *"
+    # Every hour, check for upstream changes
+    - cron: "0 * * * *"
   workflow_dispatch: # Allow manual trigger
 
 permissions:
@@ -31,7 +31,7 @@ jobs:
           LOCAL_HEAD=$(git rev-parse main)
 
           if [ "$UPSTREAM_HEAD" = "$LOCAL_HEAD" ]; then
-            echo "Already up to date"
+            echo "Already up to date, skipping"
             exit 0
           fi
 
@@ -46,14 +46,15 @@ jobs:
             # Merge conflict — create a PR for manual resolution
             echo "Merge conflict detected, creating PR..."
             git merge --abort
-            git checkout -b sync/upstream-$(date +%Y%m%d)
+            BRANCH="sync/upstream-$(date +%Y%m%d-%H%M)"
+            git checkout -b "$BRANCH"
             git merge upstream/main --no-edit || true
-            git push origin HEAD
+            git push origin "$BRANCH"
 
             gh pr create \
               --title "sync: upstream $(date +%Y-%m-%d)" \
               --body "Upstream has changes that conflict with local modifications. Please resolve manually." \
               --base main \
-              --head sync/upstream-$(date +%Y%m%d) \
+              --head "$BRANCH" \
               --label "sync" || true
           fi

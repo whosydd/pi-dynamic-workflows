@@ -91,6 +91,11 @@ function summarizeResult(result: unknown, maxChars: number = DEFAULT_DELIVERED_M
   return `${kept}\n…(truncated ${formatBytes(droppedBytes)})`;
 }
 
+function renderSeparator(theme: Theme, width?: number): string {
+  const w = typeof width === "number" && Number.isFinite(width) ? Math.max(0, Math.floor(width)) : 200;
+  return theme.fg("dim", "─".repeat(w));
+}
+
 function fitLine(line: string, width?: number): string {
   if (typeof width !== "number" || !Number.isFinite(width)) return line;
   const maxWidth = Math.max(0, Math.floor(width));
@@ -253,7 +258,9 @@ export function renderPanel(manager: WorkflowManager, theme: Theme, width?: numb
       ? `  /workflows — open navigator (${finished} finished kept in history)`
       : "  /workflows — open navigator",
   );
-  return [theme.bold(`Workflows running (${active.length}):`), ...rows, hint].map((line) => fitLine(line, width));
+  return [theme.bold(`Workflows running (${active.length}):`), ...rows, hint, renderSeparator(theme, width)].map(
+    (line) => fitLine(line, width),
+  );
 }
 
 // ─── Detailed mode: live token rate ────────────────────────────────────────────
@@ -418,6 +425,7 @@ export function renderPanelDetailed(
         : "  /workflows — open navigator",
     ),
   );
+  out.push(renderSeparator(theme, width));
   return out.map((line) => fitLine(line, width));
 }
 

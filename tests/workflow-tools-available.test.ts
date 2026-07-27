@@ -389,6 +389,7 @@ describe("workflow extension - control tool availability", () => {
             sessionManager: { getSessionId: () => "session-1" },
             ui: {
               setWidget: () => {},
+              setStatus: () => {},
             },
           },
         );
@@ -454,7 +455,7 @@ describe("workflow extension - control tool availability", () => {
             model: undefined,
             modelRegistry: {},
             sessionManager: { getSessionId: () => "session-1" },
-            ui: { setWidget: () => {} },
+            ui: { setWidget: () => {}, setStatus: () => {} },
           },
         );
 

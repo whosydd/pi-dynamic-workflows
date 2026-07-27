@@ -454,6 +454,7 @@ describe("installTaskPanel", () => {
         registeredName = name;
         registeredPlacement = opts.placement ?? "";
       },
+      setStatus: () => {},
     };
 
     mod.installTaskPanel(null, manager, ui);
@@ -487,6 +488,7 @@ describe("installTaskPanel", () => {
       setWidget: (_name: string, registeredFactory: typeof factory) => {
         factory = registeredFactory;
       },
+      setStatus: () => {},
     };
     const theme = { fg: (_c: string, t: string) => t, bold: (t: string) => t };
 
@@ -834,6 +836,7 @@ describe("installTaskPanel mode selection", () => {
       setWidget: (_n: string, f: typeof factory) => {
         factory = f;
       },
+      setStatus: () => {},
     };
     mod.installTaskPanel(null, manager as never, ui as never, { loadSettings } as never);
     const comp = factory?.({ requestRender: () => {} }, theme);

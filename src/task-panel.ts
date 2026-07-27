@@ -460,28 +460,15 @@ export function installTaskPanel(
   };
   const hasActiveRun = () => manager.listRuns().some((r) => r.status === "running" || r.status === "paused");
 
-  // Expose workflow active state via setStatus so other extensions (e.g. statusline) can detect it.
-  const updateWorkflowStatus = () => {
-    const runs = manager.listRuns().filter((r) => r.status === "running" || r.status === "paused");
-    if (runs.length > 0) {
-      const summary = runs.map((r) => r.workflowName ?? "workflow").join(", ");
-      ui.setStatus("workflow-active", `workflow: ${summary}`);
-    } else {
-      ui.setStatus("workflow-active", undefined);
-    }
-  };
-
   ui.setWidget(
     "workflow-tasks",
     (tui: TUI, theme: Theme) => {
       const onEvent = () => {
-        updateWorkflowStatus();
         tui.requestRender();
       };
       for (const ev of RUN_EVENTS) manager.on(ev, onEvent);
       const onRunEnd = ({ runId }: { runId: string }) => {
         clearTokenSamples(runId);
-        updateWorkflowStatus();
       };
       for (const ev of RUN_END_EVENTS) manager.on(ev, onRunEnd);
       // In detailed mode, force a redraw every 2s while a run is active so the
@@ -506,13 +493,10 @@ export function installTaskPanel(
           clearInterval(timer);
           for (const ev of RUN_EVENTS) manager.off(ev, onEvent);
           for (const ev of RUN_END_EVENTS) manager.off(ev, onRunEnd);
-          ui.setStatus("workflow-active", undefined);
         },
       };
       return comp;
     },
     { placement: "belowEditor" },
   );
-  // Initial status update
-  updateWorkflowStatus();
 }

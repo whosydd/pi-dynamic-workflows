@@ -456,7 +456,7 @@ export function installTaskPanel(
   const updateWorkflowStatus = () => {
     const runs = manager.listRuns().filter((r) => r.status === "running" || r.status === "paused");
     if (runs.length > 0) {
-      const summary = runs.map((r) => r.meta?.name ?? "workflow").join(", ");
+      const summary = runs.map((r) => r.workflowName ?? "workflow").join(", ");
       ui.setStatus("workflow-active", `workflow: ${summary}`);
     } else {
       ui.setStatus("workflow-active", undefined);

@@ -466,9 +466,15 @@ export function installTaskPanel(
   ui.setWidget(
     "workflow-tasks",
     (tui: TUI, theme: Theme) => {
-      const onEvent = () => { updateWorkflowStatus(); tui.requestRender(); };
+      const onEvent = () => {
+        updateWorkflowStatus();
+        tui.requestRender();
+      };
       for (const ev of RUN_EVENTS) manager.on(ev, onEvent);
-      const onRunEnd = ({ runId }: { runId: string }) => { clearTokenSamples(runId); updateWorkflowStatus(); };
+      const onRunEnd = ({ runId }: { runId: string }) => {
+        clearTokenSamples(runId);
+        updateWorkflowStatus();
+      };
       for (const ev of RUN_END_EVENTS) manager.on(ev, onRunEnd);
       // In detailed mode, force a redraw every 2s while a run is active so the
       // token/s rate keeps updating between sparse token events — and decays to 0
